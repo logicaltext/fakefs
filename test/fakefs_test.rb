@@ -468,12 +468,18 @@ class FakeFSTest < Test::Unit::TestCase
     assert_equal ['/one/two/three'], Dir['/one/**/three']
   end
 
-  def test_dir_recursive_glob_ending_in_wildcards_only_returns_files
+  def test_dir_recursive_glob_ending_in_wildcards_returns_files_and_directories
     File.open('/one/two/three/four.rb', 'w')
     File.open('/one/five.rb', 'w')
-    assert_equal ['/one/five.rb', '/one/two/three/four.rb'], Dir['/one/**/*']
-    assert_equal ['/one/five.rb', '/one/two/three/four.rb'], Dir['/one/**']
-  end
+
+    expected  = [ '/one/five.rb', '/one/two' ]
+    expected += [ '/one/two/three', '/one/two/three/four.rb' ]
+    assert_equal expected, Dir['/one/**/*']
+
+    expected = ['/one/five.rb', '/one/two']
+    assert_equal expected, Dir['/one/**']
+   end
+
 
   def test_should_report_pos_as_0_when_opening
     File.open("/foo", "w") do |f|
